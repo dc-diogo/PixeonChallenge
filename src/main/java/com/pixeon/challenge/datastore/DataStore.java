@@ -11,4 +11,8 @@ public interface DataStore {
     void saveExam(ExamDomain examDomain);
 
     int getExamNextIdentifier();
+
+    void discountPixeonCoin(HealthCareInstitutionDomain healthCareInstitutionDomain);
+
+    ExamDomain getExamById(int identifier);
 }

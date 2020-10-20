@@ -18,10 +18,12 @@ public final class ExamService {
         this.dataStore = dataStore;
     }
 
-    @GetMapping("search")
-    public String searchExam(@RequestParam int identifier) {
+    @GetMapping("exam/find")
+    public ExamDomain searchExam(@RequestParam int identifier) {
 
-        return "";
+        ExamDomain examDomain = dataStore.getExamById(identifier);
+
+        return examDomain;
     }
 
     @PostMapping("exam/create")
@@ -54,6 +56,5 @@ public final class ExamService {
 
         return "Unable to input exam in database";
     }
-
 
 }

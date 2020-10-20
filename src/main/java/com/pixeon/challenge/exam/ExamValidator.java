@@ -10,10 +10,7 @@ public class ExamValidator {
 
     public boolean validate(ExamDomain examDomain){
 
-        if (validateHealthCareInstitutionCoins(examDomain.getHealthCareInstitutionDomain())){
-            return true;
-        }
-        return false;
+        return validateHealthCareInstitutionCoins(examDomain.getHealthCareInstitutionDomain());
     }
 
     private boolean validateHealthCareInstitutionCoins(HealthCareInstitutionDomain healthCareInstitutionDomain){
@@ -26,27 +23,4 @@ public class ExamValidator {
         return true;
     }
 
-    private boolean validadePatientAge(String patientAge){
-        return true;
-    }
-
-    private boolean validadePatientGender(char gender){
-        return true;
-    }
-
-    private boolean validadePhysicianName(String physicianName){
-        return true;
-    }
-
-    private boolean validadePhysicianCRM(String crm){
-        return true;
-    }
-
-    private boolean validadeProcedureName(String procedure){
-        return true;
-    }
-
-    private boolean validadeHCInstitution(HealthCareInstitution institution){
-        return true;
-    }
 }

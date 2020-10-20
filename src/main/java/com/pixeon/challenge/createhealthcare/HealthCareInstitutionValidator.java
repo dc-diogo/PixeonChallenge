@@ -14,15 +14,11 @@ public class HealthCareInstitutionValidator {
     private boolean validateName(String name){
 
         if (name == null) return false;
-        if (name == "" ) return false;
-
-        return true;
+        return !name.equals("");
     }
 
     private boolean validateCnpj(String cnpj){
 
-        if (cnpj.length() < 5) return false;
-
-        return true;
+        return cnpj.length() >= 5;
     }
 }

@@ -1,6 +1,5 @@
 package com.pixeon.challenge.exam;
 
-import com.pixeon.challenge.createhealthcare.domain.HealthCareInstitutionDomain;
 
 public class Exam {
 

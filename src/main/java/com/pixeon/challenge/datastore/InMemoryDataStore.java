@@ -17,7 +17,7 @@ public final class InMemoryDataStore implements DataStore {
     }
 
     @Override
-    public HealthCareInstitutionDomain getByName(String name){
+    public HealthCareInstitutionDomain getByName(String name) {
         // TODO: read more about Optional<>
 
         Optional<HealthCareInstitutionDomain> found = institutions
@@ -36,5 +36,28 @@ public final class InMemoryDataStore implements DataStore {
     @Override
     public int getExamNextIdentifier() {
         return exams.size() + 1;
+    }
+
+    @Override
+    public void discountPixeonCoin(HealthCareInstitutionDomain healthCareInstitutionDomain) {
+        int healthCareIndex = institutions.indexOf(healthCareInstitutionDomain);
+        HealthCareInstitutionDomain healthCareDomainUpdatedCoins = new HealthCareInstitutionDomain(
+                healthCareInstitutionDomain.getName(),
+                healthCareInstitutionDomain.getCnpj(),
+                healthCareInstitutionDomain.getCoins() - 1
+        );
+
+        institutions.set(healthCareIndex, healthCareDomainUpdatedCoins);
+    }
+
+    @Override
+    public ExamDomain getExamById(int identifier) {
+
+        Optional<ExamDomain> examRetrieved = exams
+                .stream()
+                .filter(exam -> exam.getIdentifier() == identifier)
+                .findFirst();
+
+        return examRetrieved.orElse(null);
     }
 }

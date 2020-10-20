@@ -14,6 +14,8 @@ public class ExamRepository {
 
     public boolean save(ExamDomain examDomain){
         dataStore.saveExam(examDomain);
+        dataStore.discountPixeonCoin(examDomain.getHealthCareInstitutionDomain());
+
         return true;
     }
 }
