@@ -1,8 +1,11 @@
 package com.pixeon.challenge.exam;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.pixeon.challenge.createhealthcare.domain.HealthCareInstitutionDomain;
 import com.pixeon.challenge.datastore.DataStore;
 import com.pixeon.challenge.exam.domain.ExamDomain;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,10 +22,21 @@ public final class ExamService {
     }
 
     @GetMapping("exam/find")
-    public Exam searchExam(@RequestParam int identifier) {
+    ResponseEntity<Exam> searchExam(@RequestParam int identifier, String institutionCnpj) {
         Exam exam = repository.getExamById(identifier);
-        return exam;
+        // TODO: There must be a better way to inform why can't retrieve the exam...
+
+        if (!exam.getInstitutionCNPJ().equals(institutionCnpj)){
+            return new ResponseEntity<>(
+                    null,
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(
+                exam,
+                HttpStatus.OK);
     }
+
 
     @PutMapping("exam/update")
     public String updateExam(@RequestBody() Exam exam) {
