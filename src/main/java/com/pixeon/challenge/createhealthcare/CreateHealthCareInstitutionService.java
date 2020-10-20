@@ -21,7 +21,7 @@ public final class CreateHealthCareInstitutionService {
 
     @GetMapping("hello")
     public String hello(@RequestParam String name) {
-        return dataStore.getByName(name).getCnpj();
+        return dataStore.getByCNPJ(name).getCnpj();
     }
 
     @PostMapping("hc/create")

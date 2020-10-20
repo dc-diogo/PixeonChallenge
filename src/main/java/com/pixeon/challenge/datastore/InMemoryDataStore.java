@@ -10,6 +10,7 @@ import java.util.*;
 public final class InMemoryDataStore implements DataStore {
     private final List<HealthCareInstitutionDomain> institutions = new ArrayList();
     private final List<ExamDomain> exams = new ArrayList<>();
+    private final List<ExamDomain> searchedExams = new ArrayList<>();
 
     @Override
     public void saveInstitution(HealthCareInstitutionDomain institution) {
@@ -17,12 +18,10 @@ public final class InMemoryDataStore implements DataStore {
     }
 
     @Override
-    public HealthCareInstitutionDomain getByName(String name) {
-        // TODO: read more about Optional<>
-
-        Optional<HealthCareInstitutionDomain> found = institutions
+    public HealthCareInstitutionDomain getByCNPJ(String cnpj) {
+         Optional<HealthCareInstitutionDomain> found = institutions
                 .stream()
-                .filter(healthCareInstitutionDomain -> healthCareInstitutionDomain.getName().equals(name))
+                .filter(healthCareInstitutionDomain -> healthCareInstitutionDomain.getCnpj().equals(cnpj))
                 .findFirst();
         return found.orElse(null);
 
@@ -40,7 +39,9 @@ public final class InMemoryDataStore implements DataStore {
 
     @Override
     public void discountPixeonCoin(HealthCareInstitutionDomain healthCareInstitutionDomain) {
-        int healthCareIndex = institutions.indexOf(healthCareInstitutionDomain);
+        Optional<HealthCareInstitutionDomain> hcInstitution = institutions.stream().filter(institution -> institution.getCnpj() == healthCareInstitutionDomain.getCnpj()).findFirst();
+
+        int healthCareIndex = institutions.indexOf(hcInstitution.get());
         HealthCareInstitutionDomain healthCareDomainUpdatedCoins = new HealthCareInstitutionDomain(
                 healthCareInstitutionDomain.getName(),
                 healthCareInstitutionDomain.getCnpj(),
@@ -53,11 +54,42 @@ public final class InMemoryDataStore implements DataStore {
     @Override
     public ExamDomain getExamById(int identifier) {
 
-        Optional<ExamDomain> examRetrieved = exams
+        ExamDomain examRetrieved = findExam(identifier, exams);
+
+        if (examRetrieved == null){
+            return null;
+        }
+
+        return examRetrieved;
+    }
+
+
+    private ExamDomain findExam(int identifier, List<ExamDomain> examsList) {
+        Optional<ExamDomain> examRetrieved = examsList
                 .stream()
                 .filter(exam -> exam.getIdentifier() == identifier)
                 .findFirst();
-
         return examRetrieved.orElse(null);
+    }
+
+    @Override
+    public void updateSearchedExam(ExamDomain examDomain) {
+
+        int examIndex = exams.indexOf(examDomain);
+        ExamDomain examDomainUpdated = new ExamDomain(
+                examDomain.getIdentifier(),
+                examDomain.getPatientName(),
+                examDomain.getPatientAge(),
+                examDomain.getPatientGender(),
+                examDomain.getPhysicianName(),
+                examDomain.getPhysicianCRM(),
+                examDomain.getProcedureName(),
+                examDomain.getHealthCareInstitutionDomain(),
+                true
+        );
+
+        exams.set(examIndex, examDomainUpdated);
+
+
     }
 }

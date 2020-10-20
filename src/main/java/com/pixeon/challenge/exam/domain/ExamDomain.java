@@ -12,17 +12,10 @@ public class ExamDomain {
     private final String physicianCRM;
     private final String procedureName;
     private final HealthCareInstitutionDomain healthCareInstitutionDomain;
+    private final boolean examAlreadySearched;
 
-    public ExamDomain(
-            int identifier,
-            String patientName,
-            int patientAge,
-            char patientGender,
-            String physicianName,
-            String physicianCRM,
-            String procedureName,
-            HealthCareInstitutionDomain healthCareInstitutionDomain
-    ) {
+
+    public ExamDomain(int identifier, String patientName, int patientAge, char patientGender, String physicianName, String physicianCRM, String procedureName, HealthCareInstitutionDomain healthCareInstitutionDomain, boolean examAlreadySearched) {
         this.identifier = identifier;
         this.patientName = patientName;
         this.patientAge = patientAge;
@@ -31,6 +24,7 @@ public class ExamDomain {
         this.physicianCRM = physicianCRM;
         this.procedureName = procedureName;
         this.healthCareInstitutionDomain = healthCareInstitutionDomain;
+        this.examAlreadySearched = examAlreadySearched;
     }
 
     public int getIdentifier() {
@@ -63,5 +57,9 @@ public class ExamDomain {
 
     public HealthCareInstitutionDomain getHealthCareInstitutionDomain() {
         return healthCareInstitutionDomain;
+    }
+
+    public boolean isExamAlreadySearched() {
+        return examAlreadySearched;
     }
 }

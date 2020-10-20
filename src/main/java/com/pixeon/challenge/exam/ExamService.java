@@ -19,31 +19,36 @@ public final class ExamService {
     }
 
     @GetMapping("exam/find")
-    public ExamDomain searchExam(@RequestParam int identifier) {
+    public Exam searchExam(@RequestParam int identifier) {
+        Exam exam = repository.getExamById(identifier);
+        return exam;
+    }
 
-        ExamDomain examDomain = dataStore.getExamById(identifier);
+    @PutMapping("exam/update")
+    public String updateExam(@RequestBody() Exam exam) {
 
-        return examDomain;
+        return "";
     }
 
     @PostMapping("exam/create")
     public String createExam(@RequestBody() Exam exam) {
 
-        HealthCareInstitutionDomain healthCareInstitutionDomain = dataStore.getByName(exam.getInstitutionName());
+        HealthCareInstitutionDomain healthCareInstitutionDomain = repository.getByCNPJ(exam.getInstitutionCNPJ());
 
         if (healthCareInstitutionDomain == null) {
             return "Health Care Institution not found in database";
         }
 
         ExamDomain examDomain = new ExamDomain(
-                dataStore.getExamNextIdentifier(),
+                repository.getExamNextIdentifier(),
                 exam.getPatientName(),
                 exam.getPatientAge(),
                 exam.getPatientGender(),
                 exam.getPhysicianName(),
                 exam.getPhysicianCRM(),
                 exam.getProcedureName(),
-                healthCareInstitutionDomain
+                healthCareInstitutionDomain,
+                false
         );
 
         if (!validator.validate(examDomain)){
