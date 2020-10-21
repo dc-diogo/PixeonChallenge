@@ -17,4 +17,6 @@ public interface DataStore {
     ExamDomain getExamById(int identifier);
 
     void updateSearchedExam(ExamDomain examDomain);
+
+    void deleteExam(ExamDomain examDomain);
 }

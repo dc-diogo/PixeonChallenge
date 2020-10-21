@@ -1,5 +1,6 @@
 package com.pixeon.challenge.exam;
 
+import com.pixeon.challenge.createhealthcare.HealthCareInstitution;
 import com.pixeon.challenge.createhealthcare.domain.HealthCareInstitutionDomain;
 import com.pixeon.challenge.datastore.DataStore;
 import com.pixeon.challenge.exam.domain.ExamDomain;
@@ -13,25 +14,94 @@ public class ExamRepository {
         this.dataStore = dataStore;
     }
 
-    public boolean save(ExamDomain examDomain){
-        if (hasCoins(examDomain.getHealthCareInstitutionDomain())){
+    public String saveExam(ExamDomain examDomain) {
+        if (hasCoins(examDomain.getHealthCareInstitutionDomain())) {
             dataStore.saveExam(examDomain);
             dataStore.discountPixeonCoin(examDomain.getHealthCareInstitutionDomain());
-            return true;
+            return "Exam saved!";
         }
-        return false;
+        return "Not enough pixeon coins";
     }
 
-    private boolean hasCoins(HealthCareInstitutionDomain healthCareInstitutionDomain){
-        return healthCareInstitutionDomain.getCoins() > 0 ? true : false;
-    }
+    public Exam findExam(int identifier) {
 
-    public Exam getExamById(int identifier) {
-
-        ExamDomain examDomain = getExamDomainById(identifier);
-        if (examDomain == null) return null;
-
+        ExamDomain examDomain = dataStore.getExamById(identifier);
+        if (examDomain == null) {
+            return null;
+        }
+        chargePixeonCoinIfNotRetrieved(examDomain);
         return generateExamReturnObject(examDomain);
+    }
+
+    public Exam updateExam(Exam exam) {
+
+        ExamDomain examDomain = dataStore.getExamById(exam.getIdentifier());
+        HealthCareInstitutionDomain hcInstitutionDomain = dataStore.getByCNPJ(exam.getInstitutionCNPJ());
+
+        if (hcInstitutionDomain == null) {
+            return exam;
+        }
+
+        ExamDomain examDomainUpdated = new ExamDomain(
+                examDomain.getIdentifier(),
+                exam.getPatientName(),
+                exam.getPatientAge(),
+                exam.getPatientGender(),
+                exam.getPhysicianName(),
+                exam.getPhysicianCRM(),
+                exam.getProcedureName(),
+                hcInstitutionDomain,
+                examDomain.isExamAlreadySearched()
+        );
+
+        return generateExamReturnObject(examDomainUpdated);
+    }
+
+    public String deleteExam(int identifier, String hcInstitutionCnpj) {
+        HealthCareInstitutionDomain healthCareInstitutionDomain = getByCNPJ(hcInstitutionCnpj);
+        if (healthCareInstitutionDomain == null)
+            return "Institution not registered in Health Care Institutions Database";
+
+        ExamDomain examDomain = dataStore.getExamById(identifier);
+
+        if (examDomain == null)
+            return "Exam not found in database";
+
+        if (!examDomain.getHealthCareInstitutionDomain().getCnpj().equals(hcInstitutionCnpj))
+            return "You don't have permission to delete this exam. This exam belongs to another Health Care Institution";
+
+        dataStore.deleteExam(examDomain);
+        return "Exam deleted successfully";
+    }
+
+    public ExamDomain getExamDomain(Exam exam) {
+        HealthCareInstitutionDomain healthCareInstitutionDomain = getByCNPJ(exam.getInstitutionCNPJ());
+
+        if (healthCareInstitutionDomain == null) {
+            return null;
+        }
+
+        ExamDomain examDomain = new ExamDomain(
+                getExamNextIdentifier(),
+                exam.getPatientName(),
+                exam.getPatientAge(),
+                exam.getPatientGender(),
+                exam.getPhysicianName(),
+                exam.getPhysicianCRM(),
+                exam.getProcedureName(),
+                healthCareInstitutionDomain,
+                false
+        );
+
+        return examDomain;
+    }
+
+    private int getExamNextIdentifier() {
+        return dataStore.getExamNextIdentifier();
+    }
+
+    private boolean hasCoins(HealthCareInstitutionDomain healthCareInstitutionDomain) {
+        return healthCareInstitutionDomain.getCoins() > 0 ? true : false;
     }
 
     private Exam generateExamReturnObject(ExamDomain examDomain) {
@@ -47,64 +117,16 @@ public class ExamRepository {
         return exam;
     }
 
-    public int getExamNextIdentifier() {
-        return dataStore.getExamNextIdentifier();
-    }
-
-    public Exam updateExam(Exam exam) {
-
-        ExamDomain examDomain = getExamDomainById(exam.getIdentifier());
-        HealthCareInstitutionDomain hcInstitutionDomain = dataStore.getByCNPJ(exam.getInstitutionCNPJ());
-
-        if (hcInstitutionDomain == null){
-            return exam;
+    private void chargePixeonCoinIfNotRetrieved(ExamDomain examDomain) {
+        if (!examDomain.isExamAlreadySearched()) {
+            dataStore.discountPixeonCoin(examDomain.getHealthCareInstitutionDomain());
+            dataStore.updateSearchedExam(examDomain);
         }
-
-        ExamDomain examDomainUpdated = new ExamDomain(
-                examDomain.getIdentifier(),
-                exam.getPatientName(),
-                exam.getPatientAge(),
-                exam.getPatientGender(),
-                exam.getPhysicianName(),
-                exam.getPhysicianCRM(),
-                exam.getProcedureName(),
-                hcInstitutionDomain,
-                examDomain.isExamAlreadySearched()
-        );
-        
-
-        return generateExamReturnObject(examDomainUpdated);
     }
 
-    private ExamDomain getExamDomainById(int identifier) {
-        ExamDomain examDomain = dataStore.getExamById(identifier);
-        if (examDomain == null){
-            return null;
-        } else{
-            if (!examDomain.isExamAlreadySearched()){
-                dataStore.discountPixeonCoin(examDomain.getHealthCareInstitutionDomain());
-                dataStore.updateSearchedExam(examDomain);
-            }
-        }
-        return examDomain;
-    }
-
-    public HealthCareInstitutionDomain getByCNPJ(String institutionCNPJ) {
+    private HealthCareInstitutionDomain getByCNPJ(String institutionCNPJ) {
         return dataStore.getByCNPJ(institutionCNPJ);
     }
 
-    public ExamDomain getExamDomain(Exam exam, HealthCareInstitutionDomain healthCareInstitutionDomain) {
-        ExamDomain examDomain = new ExamDomain(
-                getExamNextIdentifier(),
-                exam.getPatientName(),
-                exam.getPatientAge(),
-                exam.getPatientGender(),
-                exam.getPhysicianName(),
-                exam.getPhysicianCRM(),
-                exam.getProcedureName(),
-                healthCareInstitutionDomain,
-                false
-        );
-        return examDomain;
-    }
+
 }

@@ -1,7 +1,5 @@
 package com.pixeon.challenge.exam;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.pixeon.challenge.createhealthcare.domain.HealthCareInstitutionDomain;
 import com.pixeon.challenge.datastore.DataStore;
 import com.pixeon.challenge.exam.domain.ExamDomain;
 import org.springframework.http.HttpStatus;
@@ -21,46 +19,38 @@ public final class ExamService {
         this.dataStore = dataStore;
     }
 
+    @PostMapping("exam/create")
+    public String createExam(@RequestBody() Exam exam) {
+
+        ExamDomain examDomain = repository.getExamDomain(exam);
+        if (examDomain == null) return "Health Care Institution not found in database";
+        if (!validator.validate(examDomain)) return "Invalid exam";
+
+        return repository.saveExam(examDomain);
+    }
 
     @GetMapping("exam/find")
     ResponseEntity<Exam> searchExam(@RequestParam() int identifier, String institutionCnpj) {
-        Exam exam = repository.getExamById(identifier);
-        // TODO: Inform why exam can't be retrieved
 
-        if (!exam.getInstitutionCNPJ().equals(institutionCnpj)){
+        Exam exam = repository.findExam(identifier);
+        // TODO: Inform why exam can't be retrieved
+        if (!exam.getInstitutionCNPJ().equals(institutionCnpj)) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>( exam, HttpStatus.OK);
+        return new ResponseEntity<>(exam, HttpStatus.OK);
     }
-
 
     @PutMapping("exam/update")
     public Exam updateExam(@RequestBody() Exam exam) {
-
         exam = repository.updateExam(exam);
         return exam;
     }
 
-    @PostMapping("exam/create")
-    public String createExam(@RequestBody() Exam exam) {
-
-        HealthCareInstitutionDomain healthCareInstitutionDomain = repository.getByCNPJ(exam.getInstitutionCNPJ());
-
-        if (healthCareInstitutionDomain == null) {
-            return "Health Care Institution not found in database";
-        }
-
-        ExamDomain examDomain = repository.getExamDomain(exam, healthCareInstitutionDomain);
-
-        if (!validator.validate(examDomain)){
-            return "Invalid exam";
-        }
-
-        if (repository.save(examDomain)) {
-            return "Saved successfully";
-        }
-
-        return "Unable to input exam in database";
+    @DeleteMapping("exam/delete")
+    public String deleteExam(@RequestParam() int identifier, @RequestParam(name = "cnpj") String hcInstitutionCnpj) {
+        return repository.deleteExam(identifier, hcInstitutionCnpj);
     }
+
+
 }

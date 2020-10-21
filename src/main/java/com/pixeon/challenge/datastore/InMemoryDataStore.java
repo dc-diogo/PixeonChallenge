@@ -10,7 +10,6 @@ import java.util.*;
 public final class InMemoryDataStore implements DataStore {
     private final List<HealthCareInstitutionDomain> institutions = new ArrayList();
     private final List<ExamDomain> exams = new ArrayList<>();
-    private final List<ExamDomain> searchedExams = new ArrayList<>();
 
     @Override
     public void saveInstitution(HealthCareInstitutionDomain institution) {
@@ -92,4 +91,9 @@ public final class InMemoryDataStore implements DataStore {
 
 
     }
+
+    public void deleteExam(ExamDomain exam){
+        exams.remove(exam);
+    }
+
 }
