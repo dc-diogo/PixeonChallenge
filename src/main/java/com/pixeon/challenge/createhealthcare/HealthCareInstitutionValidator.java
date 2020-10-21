@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 public class HealthCareInstitutionValidator {
 
     public boolean validate(HealthCareInstitutionDomain domain){
-
         return validateName(domain.getName()) && validateCnpj(domain.getCnpj());
     }
 

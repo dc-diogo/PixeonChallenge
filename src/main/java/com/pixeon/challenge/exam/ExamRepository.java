@@ -101,7 +101,7 @@ public class ExamRepository {
     }
 
     private boolean hasCoins(HealthCareInstitutionDomain healthCareInstitutionDomain) {
-        return healthCareInstitutionDomain.getCoins() > 0 ? true : false;
+        return healthCareInstitutionDomain.getCoins() > 0;
     }
 
     private Exam generateExamReturnObject(ExamDomain examDomain) {

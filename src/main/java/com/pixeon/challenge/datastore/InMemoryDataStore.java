@@ -38,7 +38,7 @@ public final class InMemoryDataStore implements DataStore {
 
     @Override
     public void discountPixeonCoin(HealthCareInstitutionDomain healthCareInstitutionDomain) {
-        Optional<HealthCareInstitutionDomain> hcInstitution = institutions.stream().filter(institution -> institution.getCnpj() == healthCareInstitutionDomain.getCnpj()).findFirst();
+        Optional<HealthCareInstitutionDomain> hcInstitution = institutions.stream().filter(institution -> Objects.equals(institution.getCnpj(), healthCareInstitutionDomain.getCnpj())).findFirst();
 
         int healthCareIndex = institutions.indexOf(hcInstitution.get());
         HealthCareInstitutionDomain healthCareDomainUpdatedCoins = new HealthCareInstitutionDomain(
