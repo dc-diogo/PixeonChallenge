@@ -21,27 +21,25 @@ public final class ExamService {
         this.dataStore = dataStore;
     }
 
+
     @GetMapping("exam/find")
-    ResponseEntity<Exam> searchExam(@RequestParam int identifier, String institutionCnpj) {
+    ResponseEntity<Exam> searchExam(@RequestParam() int identifier, String institutionCnpj) {
         Exam exam = repository.getExamById(identifier);
-        // TODO: There must be a better way to inform why can't retrieve the exam...
+        // TODO: Inform why exam can't be retrieved
 
         if (!exam.getInstitutionCNPJ().equals(institutionCnpj)){
-            return new ResponseEntity<>(
-                    null,
-                    HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(
-                exam,
-                HttpStatus.OK);
+        return new ResponseEntity<>( exam, HttpStatus.OK);
     }
 
 
     @PutMapping("exam/update")
-    public String updateExam(@RequestBody() Exam exam) {
+    public Exam updateExam(@RequestBody() Exam exam) {
 
-        return "";
+        exam = repository.updateExam(exam);
+        return exam;
     }
 
     @PostMapping("exam/create")
@@ -53,17 +51,7 @@ public final class ExamService {
             return "Health Care Institution not found in database";
         }
 
-        ExamDomain examDomain = new ExamDomain(
-                repository.getExamNextIdentifier(),
-                exam.getPatientName(),
-                exam.getPatientAge(),
-                exam.getPatientGender(),
-                exam.getPhysicianName(),
-                exam.getPhysicianCRM(),
-                exam.getProcedureName(),
-                healthCareInstitutionDomain,
-                false
-        );
+        ExamDomain examDomain = repository.getExamDomain(exam, healthCareInstitutionDomain);
 
         if (!validator.validate(examDomain)){
             return "Invalid exam";
@@ -75,5 +63,4 @@ public final class ExamService {
 
         return "Unable to input exam in database";
     }
-
 }
