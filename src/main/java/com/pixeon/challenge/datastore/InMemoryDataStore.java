@@ -93,8 +93,13 @@ public final class InMemoryDataStore implements DataStore {
 
     }
 
+    @Override
     public void deleteExam(ExamDomain exam) {
         exams.remove(exam);
     }
 
+    @Override
+    public void updateExam(int examIndex, ExamDomain examDomainUpdated) {
+        exams.set(examIndex, examDomainUpdated);
+    }
 }

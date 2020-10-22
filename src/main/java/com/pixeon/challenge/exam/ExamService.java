@@ -56,9 +56,12 @@ public final class ExamService {
     }
 
     @PutMapping("exam/update")
-    public Exam updateExam(@RequestBody() Exam exam) {
+    ResponseEntity<Exam> updateExam(@RequestBody() Exam exam) {
         exam = repository.updateExam(exam);
-        return exam;
+        if (exam == null){
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(exam, HttpStatus.OK);
     }
 
     @DeleteMapping("exam/delete")

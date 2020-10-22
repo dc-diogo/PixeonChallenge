@@ -22,8 +22,6 @@ public class ExamRepository {
         return "Not enough pixeon coins";
     }
 
-
-
     public Exam findExam(int identifier) {
 
         ExamDomain examDomain = dataStore.getExamById(identifier);
@@ -37,6 +35,11 @@ public class ExamRepository {
     public Exam updateExam(Exam exam) {
 
         ExamDomain examDomain = dataStore.getExamById(exam.getIdentifier());
+
+        if (examDomain == null){
+            return null;
+        }
+
         HealthCareInstitutionDomain hcInstitutionDomain = dataStore.getByCNPJ(exam.getInstitutionCNPJ());
 
         if (hcInstitutionDomain == null) {
@@ -54,6 +57,8 @@ public class ExamRepository {
                 hcInstitutionDomain,
                 examDomain.isExamAlreadySearched()
         );
+
+        dataStore.updateExam(examDomain.getIdentifier(), examDomainUpdated);
 
         return generateExamReturnObject(examDomainUpdated);
     }

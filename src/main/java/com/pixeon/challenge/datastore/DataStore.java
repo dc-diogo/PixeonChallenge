@@ -22,4 +22,5 @@ public interface DataStore {
 
     void updateHealthCareInstitutionCoins(int healthCareIndex, HealthCareInstitutionDomain healthCareDomainUpdatedCoins);
 
+    void updateExam(int identifier, ExamDomain examDomainUpdated);
 }
