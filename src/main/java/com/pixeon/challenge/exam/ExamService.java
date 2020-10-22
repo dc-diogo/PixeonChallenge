@@ -1,5 +1,7 @@
 package com.pixeon.challenge.exam;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pixeon.challenge.datastore.DataStore;
 import com.pixeon.challenge.exam.domain.ExamDomain;
 import org.springframework.http.HttpStatus;
@@ -30,15 +32,27 @@ public final class ExamService {
     }
 
     @GetMapping("exam/find")
-    ResponseEntity<Exam> searchExam(@RequestParam() int identifier, String institutionCnpj) {
+    ResponseEntity<String> searchExam(@RequestParam() int identifier, String institutionCnpj) {
 
         Exam exam = repository.findExam(identifier);
-        // TODO: Inform why exam can't be retrieved
-        if (!exam.getInstitutionCNPJ().equals(institutionCnpj)) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        if (exam.equals(null)){
+            return new ResponseEntity<>("Exam not found.", HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(exam, HttpStatus.OK);
+        if (!exam.getInstitutionCNPJ().equals(institutionCnpj)) {
+            return new ResponseEntity<>("This Institution does not have permission to access this exam.", HttpStatus.FORBIDDEN);
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            return new ResponseEntity<>(mapper.writeValueAsString(exam), HttpStatus.OK);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return new ResponseEntity<>("Unexpected error", HttpStatus.NOT_FOUND);
+
     }
 
     @PutMapping("exam/update")
