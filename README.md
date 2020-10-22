@@ -98,7 +98,7 @@ To run the application, use the IDE of your preference and import the project as
 
 
 ### Delete Exam
-> URL: ``/exam/find`` 
+> URL: ``/exam/update`` 
 > Type: ``DELETE``
 > Parameters: ``QueryParam``
 > | Field | Type | Description |
