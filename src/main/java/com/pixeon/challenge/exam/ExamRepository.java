@@ -1,6 +1,5 @@
 package com.pixeon.challenge.exam;
 
-import com.pixeon.challenge.createhealthcare.HealthCareInstitution;
 import com.pixeon.challenge.createhealthcare.domain.HealthCareInstitutionDomain;
 import com.pixeon.challenge.datastore.DataStore;
 import com.pixeon.challenge.exam.domain.ExamDomain;
@@ -17,11 +16,13 @@ public class ExamRepository {
     public String saveExam(ExamDomain examDomain) {
         if (hasCoins(examDomain.getHealthCareInstitutionDomain())) {
             dataStore.saveExam(examDomain);
-            dataStore.discountPixeonCoin(examDomain.getHealthCareInstitutionDomain());
+            discountPixeonCoin(examDomain);
             return "Exam saved!";
         }
         return "Not enough pixeon coins";
     }
+
+
 
     public Exam findExam(int identifier) {
 
@@ -119,9 +120,14 @@ public class ExamRepository {
 
     private void chargePixeonCoinIfNotRetrieved(ExamDomain examDomain) {
         if (!examDomain.isExamAlreadySearched()) {
-            dataStore.discountPixeonCoin(examDomain.getHealthCareInstitutionDomain());
+            discountPixeonCoin(examDomain);
             dataStore.updateSearchedExam(examDomain);
         }
+    }
+
+    private void discountPixeonCoin(ExamDomain examDomain) {
+        int healthCareDomainPositionToUpdateCoins = dataStore.getHealthCareDomainPositionToUpdateCoins(examDomain.getHealthCareInstitutionDomain());
+        dataStore.updateHealthCareInstitutionCoins(healthCareDomainPositionToUpdateCoins, examDomain.getHealthCareInstitutionDomain());
     }
 
     private HealthCareInstitutionDomain getByCNPJ(String institutionCNPJ) {

@@ -1,5 +1,6 @@
 package com.pixeon.challenge.datastore;
 
+import com.pixeon.challenge.createhealthcare.HealthCareInstitution;
 import com.pixeon.challenge.createhealthcare.domain.HealthCareInstitutionDomain;
 import com.pixeon.challenge.exam.domain.ExamDomain;
 import org.springframework.stereotype.Component;
@@ -36,17 +37,22 @@ public final class InMemoryDataStore implements DataStore {
         return exams.size() + 1;
     }
 
-    @Override
-    public void discountPixeonCoin(HealthCareInstitutionDomain healthCareInstitutionDomain) {
-        Optional<HealthCareInstitutionDomain> hcInstitution = institutions.stream().filter(institution -> Objects.equals(institution.getCnpj(), healthCareInstitutionDomain.getCnpj())).findFirst();
 
-        int healthCareIndex = institutions.indexOf(hcInstitution.get());
-        HealthCareInstitutionDomain healthCareDomainUpdatedCoins = new HealthCareInstitutionDomain(
-                healthCareInstitutionDomain.getName(),
-                healthCareInstitutionDomain.getCnpj(),
-                healthCareInstitutionDomain.getCoins() - 1
-        );
+    public Optional<HealthCareInstitutionDomain> findHealthCareInstitutionDomainByCnpj(HealthCareInstitutionDomain healthCareInstitutionDomain) {
+        Optional<HealthCareInstitutionDomain> hcInstitution = institutions
+                .stream()
+                .filter(institution -> Objects.equals(institution.getCnpj(), healthCareInstitutionDomain.getCnpj()))
+                .findFirst();
 
+        return hcInstitution;
+    }
+
+    public int getHealthCareDomainPositionToUpdateCoins(HealthCareInstitutionDomain healthCareInstitutionDomain){
+        Optional<HealthCareInstitutionDomain> hcInstitution = findHealthCareInstitutionDomainByCnpj(healthCareInstitutionDomain);
+        return institutions.indexOf(hcInstitution.get());
+    }
+
+    public void updateHealthCareInstitutionCoins(int healthCareIndex, HealthCareInstitutionDomain healthCareDomainUpdatedCoins){
         institutions.set(healthCareIndex, healthCareDomainUpdatedCoins);
     }
 

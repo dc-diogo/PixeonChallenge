@@ -12,11 +12,14 @@ public interface DataStore {
 
     int getExamNextIdentifier();
 
-    void discountPixeonCoin(HealthCareInstitutionDomain healthCareInstitutionDomain);
-
     ExamDomain getExamById(int identifier);
 
     void updateSearchedExam(ExamDomain examDomain);
 
     void deleteExam(ExamDomain examDomain);
+
+    int getHealthCareDomainPositionToUpdateCoins(HealthCareInstitutionDomain healthCareInstitutionDomain);
+
+    void updateHealthCareInstitutionCoins(int healthCareIndex, HealthCareInstitutionDomain healthCareDomainUpdatedCoins);
+
 }
