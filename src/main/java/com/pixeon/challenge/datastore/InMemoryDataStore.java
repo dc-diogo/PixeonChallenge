@@ -1,11 +1,13 @@
 package com.pixeon.challenge.datastore;
 
-import com.pixeon.challenge.createhealthcare.HealthCareInstitution;
 import com.pixeon.challenge.createhealthcare.domain.HealthCareInstitutionDomain;
 import com.pixeon.challenge.exam.domain.ExamDomain;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Component
 public final class InMemoryDataStore implements DataStore {
@@ -19,7 +21,7 @@ public final class InMemoryDataStore implements DataStore {
 
     @Override
     public HealthCareInstitutionDomain getByCNPJ(String cnpj) {
-         Optional<HealthCareInstitutionDomain> found = institutions
+        Optional<HealthCareInstitutionDomain> found = institutions
                 .stream()
                 .filter(healthCareInstitutionDomain -> healthCareInstitutionDomain.getCnpj().equals(cnpj))
                 .findFirst();
@@ -47,25 +49,18 @@ public final class InMemoryDataStore implements DataStore {
         return hcInstitution;
     }
 
-    public int getHealthCareDomainPositionToUpdateCoins(HealthCareInstitutionDomain healthCareInstitutionDomain){
+    public int getHealthCareDomainPositionToUpdateCoins(HealthCareInstitutionDomain healthCareInstitutionDomain) {
         Optional<HealthCareInstitutionDomain> hcInstitution = findHealthCareInstitutionDomainByCnpj(healthCareInstitutionDomain);
         return institutions.indexOf(hcInstitution.get());
     }
 
-    public void updateHealthCareInstitutionCoins(int healthCareIndex, HealthCareInstitutionDomain healthCareDomainUpdatedCoins){
+    public void updateHealthCareInstitutionCoins(int healthCareIndex, HealthCareInstitutionDomain healthCareDomainUpdatedCoins) {
         institutions.set(healthCareIndex, healthCareDomainUpdatedCoins);
     }
 
     @Override
     public ExamDomain getExamById(int identifier) {
-
-        ExamDomain examRetrieved = findExam(identifier, exams);
-
-        if (examRetrieved == null){
-            return null;
-        }
-
-        return examRetrieved;
+        return findExam(identifier, exams);
     }
 
 
@@ -98,7 +93,7 @@ public final class InMemoryDataStore implements DataStore {
 
     }
 
-    public void deleteExam(ExamDomain exam){
+    public void deleteExam(ExamDomain exam) {
         exams.remove(exam);
     }
 
