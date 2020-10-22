@@ -17,7 +17,7 @@ public class HealthCareInstitutionValidator {
     }
 
     private boolean validateCnpj(String cnpj){
-
-        return cnpj.length() >= 5;
+        return cnpj.length() >= 14;
     }
+
 }
