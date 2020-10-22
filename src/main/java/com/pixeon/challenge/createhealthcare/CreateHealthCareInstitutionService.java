@@ -23,10 +23,10 @@ public final class CreateHealthCareInstitutionService {
 
         if (validator.validate(domainInstitution)){
             repository.save(domainInstitution);
-            return new ResponseEntity<>("Institution saved successfully.", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Institution saved successfully.", HttpStatus.OK);
         }
 
-        return new ResponseEntity<>("Invalid institution, please check and try again", HttpStatus.OK);
+        return new ResponseEntity<>("Invalid institution, please check and try again", HttpStatus.BAD_REQUEST);
 
     }
 }
